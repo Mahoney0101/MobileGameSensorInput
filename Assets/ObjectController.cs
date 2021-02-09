@@ -17,7 +17,7 @@ void Start()
  {
     transform.position += Vector3.down;
  }
- public void MoveTo(Touch touch, Vector3 destination){
+ public void MoveTo(Ray ray, Touch touch, Vector3 destination){
     // get the touch position from the screen touch to world point
     Vector3 touchedPos = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 10));
     // lerp and set the position of the current object to that of the touch, but smoothly over time.

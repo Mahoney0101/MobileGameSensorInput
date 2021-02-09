@@ -20,7 +20,7 @@ public class SphereController : MonoBehaviour, IControllable
     {
         transform.position += Vector3.right;
     }
-     public void MoveTo(Touch touch,Vector3 destination){
+     public void MoveTo(Ray ray, Touch touch,Vector3 destination){
      drag_position = destination;
  }
      public void Stop(){

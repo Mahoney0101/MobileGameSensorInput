@@ -12,8 +12,8 @@ public class TouchManagerScript : MonoBehaviour
     Ray new_position;
     void Start()
     {
-        // GameObject ourCameraPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        // ourCameraPlane.transform.up = (Camera.main.transform.position - ourCameraPlane.transform.position).normalized;
+        GameObject ourCameraPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        ourCameraPlane.transform.localRotation = Quaternion.Euler(30, 180, 0);  
     }
 
     void Update()
@@ -42,7 +42,7 @@ public class TouchManagerScript : MonoBehaviour
                 if(object_hit != null)
                 {
                     if(selectedObject == null){
-                        object_hit.youveBeenTapped();
+                        //object_hit.youveBeenTapped();
                         Debug.Log("YOUVE BEEN TAPPED");
                         selectedObject = object_hit;
                         starting_distance_to_selected_object = Vector3.Distance(Camera.main.transform.position, info.transform.position);
@@ -59,21 +59,17 @@ public class TouchManagerScript : MonoBehaviour
         switch(Input.touches[0].phase)
         {
             case TouchPhase.Began:
-
-
                 break;
-            
             case TouchPhase.Moved:
                 new_position = Camera.main.ScreenPointToRay(Input.touches[0].position);
-                selectedObject.MoveTo(Input.touches[0],new_position.GetPoint(starting_distance_to_selected_object));
+                selectedObject.MoveTo(ourRay, Input.touches[0], new_position.GetPoint(starting_distance_to_selected_object));
                 break;
-
             case TouchPhase.Stationary:
                 // new_position = Camera.main.ScreenPointToRay(Input.touches[0].position);
                 // selectedObject.MoveTo(Input.touches[0],new_position.GetPoint(starting_distance_to_selected_object));
                 break;
             case TouchPhase.Ended:
-                // selectedObject.Stop();
+                selectedObject.Stop();
                 break;
         }
         }
