@@ -9,6 +9,8 @@ public class CapsuleController : MonoBehaviour, IControllable
     {
         
     }
+    Vector3 initialScale;
+    float initialDistance=1f;
 
     // Update is called once per frame
     void Update()
@@ -48,5 +50,32 @@ public class CapsuleController : MonoBehaviour, IControllable
 }
 public void ScaleObject()
  {
+        float min = 0.6f;
+        if(transform.localScale.x <= min){
+                transform.localScale = new Vector3(0.7f,0.7f,0.7f);
+                return;
+            }
+     	var touchZero = Input.GetTouch(0); 
+        var touchOne = Input.GetTouch(1);
+
+        if(touchZero.phase == TouchPhase.Ended || touchZero.phase == TouchPhase.Canceled  
+           || touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled) 
+        {
+            return;
+        }
+
+        if(touchZero.phase == TouchPhase.Began || touchOne.phase == TouchPhase.Began)
+        {
+            initialDistance = Vector2.Distance(touchZero.position, touchOne.position);
+            initialScale = transform.localScale;
+        }
+        else
+        {
+            var currentDistance = Vector2.Distance(touchZero.position, touchOne.position);
+            if(Mathf.Approximately(initialDistance, 0)) return;
+
+            var factor = currentDistance / initialDistance;
+            transform.localScale = initialScale * factor;
+        }
  }
 }

@@ -37,6 +37,11 @@ void Start()
 
  public void ScaleObject()
  {
+      float min = 0.6f;
+      if(transform.localScale.x <= min){
+         transform.localScale = new Vector3(0.7f,0.7f,0.7f);
+         return;
+      }
 	 	var touchZero = Input.GetTouch(0); 
         var touchOne = Input.GetTouch(1);
 
