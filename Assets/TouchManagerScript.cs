@@ -20,6 +20,8 @@ public class TouchManagerScript : MonoBehaviour
     const float pinchRatio = 1;
 
     static public float turnAngle;
+    private Vector3 initialScale;
+    private float initialDistance;
 
     void Start()
     {
@@ -113,9 +115,12 @@ public class TouchManagerScript : MonoBehaviour
         }
         }
     }
-     if(Input.touchCount == 2 && selectedObject != null)
+    if(Input.touchCount == 2 && selectedObject != null)
      {
-     selectedObject.RotateObject(Calculate());
+        Touch touch1 = Input.GetTouch(0);
+        Touch touch2 = Input.GetTouch(1);
+        selectedObject.RotateObject(Calculate());
+        selectedObject.ScaleObject();
      }
     
 }
@@ -143,20 +148,6 @@ public class TouchManagerScript : MonoBehaviour
 			Touch touch1 = Input.touches[0];
 			Touch touch2 = Input.touches[1];
 			if (touch1.phase == TouchPhase.Moved || touch2.phase == TouchPhase.Moved) {
-				// // ... check the delta distance between them ...
-				// pinchDistance = Vector2.Distance(touch1.position, touch2.position);
-				// float prevDistance = Vector2.Distance(touch1.position - touch1.deltaPosition,
-				//                                       touch2.position - touch2.deltaPosition);
-				// pinchDistanceDelta = pinchDistance - prevDistance;
- 
-				// // ... if it's greater than a minimum threshold, it's a pinch!
-				// if (Mathf.Abs(pinchDistanceDelta) > minPinchDistance) {
-				// 	pinchDistanceDelta *= pinchRatio;
-				// } else {
-				// 	pinchDistance = pinchDistanceDelta = 0;
-				// }
- 
-				// ... or check the delta angle between them ...
 				turnAngle = Angle(touch1.position, touch2.position);
 				float prevTurn = Angle(touch1.position - touch1.deltaPosition,
 				                       touch2.position - touch2.deltaPosition);
@@ -186,8 +177,6 @@ public class TouchManagerScript : MonoBehaviour
  
 		return result;
 	}
-
-
     
     void Zoom(float deltaMagnitudeDiff, float speed)
     {

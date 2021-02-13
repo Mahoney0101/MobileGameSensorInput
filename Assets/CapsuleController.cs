@@ -46,4 +46,7 @@ public class CapsuleController : MonoBehaviour, IControllable
 	// not so sure those will work:
 	transform.rotation = desiredRotation;
 }
+public void ScaleObject()
+ {
+ }
 }

@@ -4,31 +4,26 @@ using UnityEngine;
 
 public class ObjectController : MonoBehaviour, IControllable
 {
+Vector3 initialScale;
+float initialDistance=1f;
 void Start()
 {
-}
 
+}  
  void Update () 
  {
 
  }
     public void RotateObject(float turnAngleDelta)
 {
-	//float pinchAmount = 0;
 	Quaternion desiredRotation = transform.rotation;
- 
-	// if (Mathf.Abs(pinchDistanceDelta) > 0) { // zoom
-	// 	pinchAmount = pinchDistanceDelta;
-	// }
- 
-	if (Mathf.Abs(turnAngleDelta) > 0) { // rotate
+
+	if (Mathf.Abs(turnAngleDelta) > 0) { 
 		Vector3 rotationDeg = Vector3.zero;
 		rotationDeg.z = -turnAngleDelta;
 		desiredRotation *= Quaternion.Euler(-rotationDeg);
 	}
-	// not so sure those will work:
 	transform.rotation = desiredRotation;
-	// transform.position += Vector3.forward * pinchAmount;
 }
 
  public void youveBeenTapped()
@@ -36,10 +31,34 @@ void Start()
     transform.position += Vector3.down;
  }
  public void MoveTo(Ray ray, Touch touch, Vector3 destination){
-    // get the touch position from the screen touch to world point
     Vector3 touchedPos = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 10));
-    // lerp and set the position of the current object to that of the touch, but smoothly over time.
     transform.position = Vector3.Lerp(transform.position, touchedPos, Time.deltaTime*10);
+ }
+
+ public void ScaleObject()
+ {
+	 	var touchZero = Input.GetTouch(0); 
+        var touchOne = Input.GetTouch(1);
+
+        if(touchZero.phase == TouchPhase.Ended || touchZero.phase == TouchPhase.Canceled  
+           || touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled) 
+        {
+            return;
+        }
+
+        if(touchZero.phase == TouchPhase.Began || touchOne.phase == TouchPhase.Began)
+        {
+            initialDistance = Vector2.Distance(touchZero.position, touchOne.position);
+            initialScale = transform.localScale;
+        }
+        else
+        {
+            var currentDistance = Vector2.Distance(touchZero.position, touchOne.position);
+            if(Mathf.Approximately(initialDistance, 0)) return;
+
+            var factor = currentDistance / initialDistance;
+            transform.localScale = initialScale * factor;
+		}
  }
  public void Stop(){
     transform.Translate(Vector3.zero, 0);

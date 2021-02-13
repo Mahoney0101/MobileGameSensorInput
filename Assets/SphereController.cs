@@ -43,4 +43,7 @@ public class SphereController : MonoBehaviour, IControllable
      public void Stop(){
         transform.Translate(Vector3.zero, 0);
      }
+     public void ScaleObject()
+ {
+ }
 }
