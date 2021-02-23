@@ -15,8 +15,9 @@ void Start()
  {
 
  }
-    public void RotateObject(float turnAngleDelta)
+    public void RotateObject(float angle)
 {
+   float turnAngleDelta = angle;
 	Quaternion desiredRotation = transform.rotation;
 
 	if (Mathf.Abs(turnAngleDelta) > 0) { 

@@ -22,21 +22,17 @@ public class SphereController : MonoBehaviour, IControllable
     {
         transform.position += Vector3.right;
     }
-    public void RotateObject(float turnAngleDelta)
+    public void RotateObject(float angle)
 {
-    	//float pinchAmount = 0;
+    float turnAngleDelta = angle;
 	Quaternion desiredRotation = transform.rotation;
- 
-	// if (Mathf.Abs(pinchDistanceDelta) > 0) { // zoom
-	// 	pinchAmount = pinchDistanceDelta;
-	// }
+
  
 	if (Mathf.Abs(turnAngleDelta) > 0) { // rotate
 		Vector3 rotationDeg = Vector3.zero;
 		rotationDeg.z = -turnAngleDelta;
 		desiredRotation *= Quaternion.Euler(-rotationDeg);
 	}
-	// not so sure those will work:
 	transform.rotation = desiredRotation;
 }
      public void MoveTo(Ray ray, Touch touch,Vector3 destination){

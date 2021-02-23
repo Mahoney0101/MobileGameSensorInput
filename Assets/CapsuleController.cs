@@ -31,8 +31,9 @@ public class CapsuleController : MonoBehaviour, IControllable
     this.gameObject.layer = LayerMask.NameToLayer("Default");
     }
 
-    public void RotateObject(float turnAngleDelta)
+    public void RotateObject(float angle)
 {
+    float turnAngleDelta = angle;
 	Quaternion desiredRotation = transform.rotation;
 
 	if (Mathf.Abs(turnAngleDelta) > 0) { // rotate
