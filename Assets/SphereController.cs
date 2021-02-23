@@ -42,7 +42,7 @@ public class SphereController : MonoBehaviour, IControllable
         transform.Translate(Vector3.zero, 0);
      }
      public void ScaleObject()
- {
+    {
         float min = 0.6f;
         if(transform.localScale.x <= min){
             transform.localScale = new Vector3(0.7f,0.7f,0.7f);
@@ -70,5 +70,10 @@ public class SphereController : MonoBehaviour, IControllable
             var factor = currentDistance / initialDistance;
             transform.localScale = initialScale * factor;
 		}
+ }
+    public void AccelerometerMove(Vector3 dir)
+ {
+    float speed = 15f;
+    transform.Translate(dir * speed);
  }
 }

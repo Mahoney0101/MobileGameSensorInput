@@ -24,17 +24,32 @@ public class TouchManagerScript : MonoBehaviour
     float initialDistance = 1f;
 
     Vector3 initialPosition;
-
+    Quaternion originalCamRotation;
+    float speed = 10.0f;
     void Start()
     {
         cam = Camera.main;
         originalCamPosition = cam.transform.position;
+        originalCamRotation = cam.transform.rotation;
 
     }
     
 
     void Update()
     {
+    if(Input.touchCount == 0 && selectedObject != null)
+    {
+        Vector3 dir = Vector3.zero;
+        dir.x = -Input.acceleration.y;
+        dir.z = Input.acceleration.x;
+        if (dir.sqrMagnitude > 1){
+            dir.Normalize();
+        }
+        dir *= Time.deltaTime;
+        
+
+        selectedObject.AccelerometerMove(dir);
+    }
     if(Input.touchCount == 1 && selectedObject == null)
         {
             Touch touch = Input.GetTouch(0);
@@ -187,6 +202,7 @@ public class TouchManagerScript : MonoBehaviour
 
     public void ResetCameraPosition(){
         cam.transform.position = originalCamPosition;
+        cam.transform.rotation = originalCamRotation;
     }
 
     public void MoveCam()
@@ -208,14 +224,10 @@ public class TouchManagerScript : MonoBehaviour
         else
         {
             var currentDistance = Vector2.Distance(touchZero.position, touchOne.position);
-            if(Mathf.Approximately(initialDistance, 0)) return;
+            if(Mathf.Approximately(initialDistance,currentDistance)) return;
+            if(Mathf.Approximately(initialDistance-currentDistance, 0)) return;
 
-            // if(currentDistance < initialDistance){
-                cam.transform.position += Vector3.forward * (initialDistance-currentDistance) * .01f;
-            // }
-            // else if(currentDistance > initialDistance){
-            //     cam.transform.position -= Vector3.forward * (initialDistance/currentDistance) * 1f;
-            // }
+            cam.transform.position += Vector3.forward * (initialDistance-currentDistance) * .01f;
         }
     }
 }

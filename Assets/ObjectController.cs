@@ -65,4 +65,9 @@ void Start()
  public void Stop(){
     transform.Translate(Vector3.zero, 0);
  }
+  public void AccelerometerMove(Vector3 dir)
+ {
+    float speed = 7f;
+    transform.Translate(dir * speed);
+ }
 }

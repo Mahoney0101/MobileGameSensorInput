@@ -73,4 +73,10 @@ public void ScaleObject()
             transform.localScale = initialScale * factor;
         }
  }
+ public void AccelerometerMove(Vector3 dir)
+ {
+    float speed = 10f;
+    transform.Translate(dir * speed);
+ }
+ 
 }

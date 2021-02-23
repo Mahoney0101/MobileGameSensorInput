@@ -8,4 +8,5 @@ interface IControllable{
     void RotateObject(float angle);
     void ScaleObject();
     void Stop();
+    void AccelerometerMove(Vector3 dir);
 }
