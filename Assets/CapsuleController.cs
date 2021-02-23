@@ -33,19 +33,13 @@ public class CapsuleController : MonoBehaviour, IControllable
 
     public void RotateObject(float turnAngleDelta)
 {
-	//float pinchAmount = 0;
 	Quaternion desiredRotation = transform.rotation;
- 
-	// if (Mathf.Abs(pinchDistanceDelta) > 0) { // zoom
-	// 	pinchAmount = pinchDistanceDelta;
-	// }
- 
+
 	if (Mathf.Abs(turnAngleDelta) > 0) { // rotate
 		Vector3 rotationDeg = Vector3.zero;
 		rotationDeg.z = -turnAngleDelta;
 		desiredRotation *= Quaternion.Euler(-rotationDeg);
 	}
-	// not so sure those will work:
 	transform.rotation = desiredRotation;
 }
 public void ScaleObject()

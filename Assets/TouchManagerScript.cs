@@ -28,7 +28,7 @@ public class TouchManagerScript : MonoBehaviour
     if(Input.touchCount == 1 && selectedObject == null)
         {
             Touch touch = Input.GetTouch(0);
-            cam.transform.Translate(touch.deltaPosition * -0.01f); 
+            cam.transform.Translate(touch.deltaPosition * -0.1f); 
         }
     if (Input.touchCount == 1) 
     {
@@ -90,27 +90,17 @@ public class TouchManagerScript : MonoBehaviour
     }
     if (Input.touchCount == 2 && selectedObject == null)
     {
-                Touch tZero = Input.GetTouch(0);
-                Touch tOne = Input.GetTouch(1);
-                // get touch position from the previous frame
-                Vector2 tZeroPrevious = tZero.position - tZero.deltaPosition;
-                Vector2 tOnePrevious = tOne.position - tOne.deltaPosition;
-
-                float oldTouchDistance = Vector2.Distance (tZeroPrevious, tOnePrevious);
-                float currentTouchDistance = Vector2.Distance (tZero.position, tOne.position);
-
-                // get offset value
-                float deltaDistance = oldTouchDistance - currentTouchDistance;
-                Zoom (deltaDistance, TouchZoomSpeed);
-                if(cam.fieldOfView < ZoomMinBound) 
-                    {
-                        cam.fieldOfView = 0.1f;
-                    }
-                    else
-                    if(cam.fieldOfView > ZoomMaxBound ) 
-                    {
-                        cam.fieldOfView = 179.9f;
-                    }
+                RotateCamera(Calculate());
+                Zoom ();
+                // if(cam.fieldOfView < ZoomMinBound) 
+                //     {
+                //         cam.fieldOfView = 0.1f;
+                //     }
+                //     else
+                //     if(cam.fieldOfView > ZoomMaxBound ) 
+                //     {
+                //         cam.fieldOfView = 179.9f;
+                //     }
     }
 
     if(Input.touchCount == 2 && selectedObject != null)
@@ -163,10 +153,32 @@ public class TouchManagerScript : MonoBehaviour
 		return result;
 	}
     
-    void Zoom(float deltaMagnitudeDiff, float speed)
-    {
-        cam.fieldOfView += deltaMagnitudeDiff * speed;
+    void Zoom()
+    {        
+        Touch tZero = Input.GetTouch(0);
+        Touch tOne = Input.GetTouch(1);
+        // get touch position from the previous frame
+        Vector2 tZeroPrevious = tZero.position - tZero.deltaPosition;
+        Vector2 tOnePrevious = tOne.position - tOne.deltaPosition;
+
+        float oldTouchDistance = Vector2.Distance (tZeroPrevious, tOnePrevious);
+        float currentTouchDistance = Vector2.Distance (tZero.position, tOne.position);
+
+        // get offset value
+        float deltaDistance = oldTouchDistance - currentTouchDistance;
+        cam.fieldOfView += deltaDistance * TouchZoomSpeed;
         // set min and max value of Clamp function upon your requirement
         cam.fieldOfView = Mathf.Clamp(cam.fieldOfView, ZoomMinBound, ZoomMaxBound);
+    }
+
+    void RotateCamera(float turnAngleDelta){
+        Quaternion desiredRotation = cam.transform.rotation;
+
+        if (Mathf.Abs(turnAngleDelta) > 0) { 
+            Vector3 rotationDeg = Vector3.zero;
+            rotationDeg.z = -turnAngleDelta;
+            desiredRotation *= Quaternion.Euler(-rotationDeg);
+        }
+	    cam.transform.rotation = desiredRotation;
     }
 }
