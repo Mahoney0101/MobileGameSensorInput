@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public class TouchManagerScript : MonoBehaviour
 {
+
     const float pinchRatio = 1;
 	const float minPinchDistance = 0;
     IControllable selectedObject;
@@ -25,13 +26,15 @@ public class TouchManagerScript : MonoBehaviour
 
     Vector3 initialPosition;
     Quaternion originalCamRotation;
-    float speed = 10.0f;
+
+    Vector3 touchInitialPosition;
+    Vector3 touchOneInitialPosition;
+    float initialposition;
     void Start()
     {
         cam = Camera.main;
         originalCamPosition = cam.transform.position;
         originalCamRotation = cam.transform.rotation;
-
     }
     
 
@@ -46,10 +49,9 @@ public class TouchManagerScript : MonoBehaviour
             dir.Normalize();
         }
         dir *= Time.deltaTime;
-        
-
         selectedObject.AccelerometerMove(dir);
     }
+
     if(Input.touchCount == 1 && selectedObject == null)
         {
             Touch touch = Input.GetTouch(0);
@@ -115,8 +117,11 @@ public class TouchManagerScript : MonoBehaviour
     }
     if (Input.touchCount == 2 && selectedObject == null)
     {
-                RotateCamera(Calculate());
-                MoveCam();
+                Touch touch = Input.touches[0];
+                float initialtouchpos = touch.position.y;
+             //   RotateCamera(Calculate());
+              //  MoveCam();
+                PanCameraUpDownLeftRight(initialtouchpos);
     }
 
     if(Input.touchCount == 2 && selectedObject != null)
@@ -180,7 +185,6 @@ public class TouchManagerScript : MonoBehaviour
 		return result;
 	}
 
-
     void RotateCamera(float turnAngleDelta){
         Quaternion desiredRotation = cam.transform.rotation;
 
@@ -191,12 +195,38 @@ public class TouchManagerScript : MonoBehaviour
         }
 	    cam.transform.rotation = desiredRotation;
     }
-    void PanCameraUpDown(){
+    void PanCameraUpDownLeftRight(float touchinitPos)
+    {
+        Touch touch = Input.touches[0];
+        Touch touchOne = Input.touches[1];
 
-    }
 
-    void PanCameraLeftRight(){
-
+        if(touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled  
+        || touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled) 
+        {
+            return;
+        }
+        if(touch.phase == TouchPhase.Moved && touchOne.phase == TouchPhase.Moved)
+        {
+            if(touch.deltaPosition.y + touchOne.deltaPosition.y > -0.2f && touch.deltaPosition.y + touchOne.deltaPosition.y < 0.2f) return;
+            if(touch.deltaPosition.x + touchOne.deltaPosition.x > -0.2f && touch.deltaPosition.x + touchOne.deltaPosition.x < 0.2f) return;
+            if(touch.deltaPosition.y + touchOne.deltaPosition.y < 0) 
+            {
+                cam.transform.Rotate(cam.transform.up, 10.0f * 0.1f);
+            }
+            else
+            {
+                cam.transform.Rotate(-cam.transform.up, 10.0f * 0.1f);
+            }
+            if(touch.deltaPosition.x + touchOne.deltaPosition.x < 0) 
+            {
+                cam.transform.Rotate(cam.transform.right, 10.0f * 0.1f);
+            }
+            else
+            {
+                cam.transform.Rotate(-cam.transform.right, 10.0f * 0.1f);
+            }
+        }
     }
 
 
@@ -227,7 +257,7 @@ public class TouchManagerScript : MonoBehaviour
             if(Mathf.Approximately(initialDistance,currentDistance)) return;
             if(Mathf.Approximately(initialDistance-currentDistance, 0)) return;
 
-            cam.transform.position += Vector3.forward * (initialDistance-currentDistance) * .01f;
+            cam.transform.position += Vector3.forward * (initialDistance-currentDistance) * .001f;
         }
     }
 }
