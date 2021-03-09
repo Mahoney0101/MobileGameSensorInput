@@ -72,8 +72,29 @@ public class SphereController : MonoBehaviour, IControllable
 		}
  }
     public void AccelerometerMove(Vector3 dir)
- {
-    float speed = 15f;
-    transform.Translate(dir * speed);
- }
+    {
+        float speed = 15f;
+        transform.Translate(dir * speed);
+    }
+
+    public void RotateObjectUpDownLeftRight()
+    {
+             Touch touch = Input.touches[0];
+        Touch touchOne = Input.touches[1];
+
+        if(touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled  
+        || touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled) 
+        {
+            return;
+        }
+        if(touch.phase == TouchPhase.Began || touchOne.phase == TouchPhase.Began)
+        {
+
+        }
+        else
+        {
+            transform.eulerAngles += new Vector3((touch.deltaPosition.y+touchOne.deltaPosition.y)/5, (touch.deltaPosition.x+touchOne.deltaPosition.x)/5, 0);
+        }
+        
+    }
 }

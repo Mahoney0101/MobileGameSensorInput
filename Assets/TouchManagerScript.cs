@@ -40,17 +40,17 @@ public class TouchManagerScript : MonoBehaviour
 
     void Update()
     {
-    if(Input.touchCount == 0 && selectedObject != null)
-    {
-        Vector3 dir = Vector3.zero;
-        dir.x = -Input.acceleration.y;
-        dir.z = Input.acceleration.x;
-        if (dir.sqrMagnitude > 1){
-            dir.Normalize();
-        }
-        dir *= Time.deltaTime;
-        selectedObject.AccelerometerMove(dir);
-    }
+    // if(Input.touchCount == 0 && selectedObject != null)
+    // {
+    //     Vector3 dir = Vector3.zero;
+    //     dir.x = -Input.acceleration.y;
+    //     dir.z = Input.acceleration.x;
+    //     if (dir.sqrMagnitude > 1){
+    //         dir.Normalize();
+    //     }
+    //     dir *= Time.deltaTime;
+    //     selectedObject.AccelerometerMove(dir);
+    // }
 
     if(Input.touchCount == 1 && selectedObject == null)
         {
@@ -117,17 +117,24 @@ public class TouchManagerScript : MonoBehaviour
     }
     if (Input.touchCount == 2 && selectedObject == null)
     {
+
                 Touch touch = Input.touches[0];
+                Touch touchOne = Input.touches[1];
                 float initialtouchpos = touch.position.y;
-             //   RotateCamera(Calculate());
-              //  MoveCam();
-                PanCameraUpDownLeftRight(initialtouchpos);
+                float prevDistance = Vector2.Distance(touch.position - touch.deltaPosition,
+				                                      touchOne.position - touchOne.deltaPosition); 
+                float distance = Vector2.Distance(touch.position,touchOne.position);
+                
+                RotateCamera(Calculate());
+                MoveCam(distance - prevDistance);
+                PanCameraUpDown(initialtouchpos);
     }
 
     if(Input.touchCount == 2 && selectedObject != null)
      {
         selectedObject.RotateObject(Calculate());
         selectedObject.ScaleObject();
+        selectedObject.RotateObjectUpDownLeftRight();
      }
     
 }
@@ -144,22 +151,11 @@ public class TouchManagerScript : MonoBehaviour
 			Touch touch1 = Input.touches[0];
 			Touch touch2 = Input.touches[1];
 			if (touch1.phase == TouchPhase.Moved || touch2.phase == TouchPhase.Moved) {
-                float prevDistance = Vector2.Distance(touch1.position - touch1.deltaPosition,
-				                                      touch2.position - touch2.deltaPosition);
-                pinchDistanceDelta = pinchDistance - prevDistance;
- 
-				// ... if it's greater than a minimum threshold, it's a pinch!
-				if (Mathf.Abs(pinchDistanceDelta) > minPinchDistance) {
-					pinchDistanceDelta *= pinchRatio;
-				} else {
-					pinchDistance = pinchDistanceDelta = 0;
-				}
 				turnAngle = Angle(touch1.position, touch2.position);
 				float prevTurn = Angle(touch1.position - touch1.deltaPosition,
 				                       touch2.position - touch2.deltaPosition);
 				turnAngleDelta = Mathf.DeltaAngle(prevTurn, turnAngle);
  
-				// ... if it's greater than a minimum threshold, it's a turn!
 				if (Mathf.Abs(turnAngleDelta) > minTurnAngle) {
 					turnAngleDelta *= pinchTurnRatio;
 				} else {
@@ -195,37 +191,23 @@ public class TouchManagerScript : MonoBehaviour
         }
 	    cam.transform.rotation = desiredRotation;
     }
-    void PanCameraUpDownLeftRight(float touchinitPos)
+    void PanCameraUpDown(float touchinitPos)
     {
         Touch touch = Input.touches[0];
         Touch touchOne = Input.touches[1];
-
 
         if(touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled  
         || touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled) 
         {
             return;
         }
-        if(touch.phase == TouchPhase.Moved && touchOne.phase == TouchPhase.Moved)
+        if(touch.phase == TouchPhase.Began || touchOne.phase == TouchPhase.Began)
         {
-            if(touch.deltaPosition.y + touchOne.deltaPosition.y > -0.2f && touch.deltaPosition.y + touchOne.deltaPosition.y < 0.2f) return;
-            if(touch.deltaPosition.x + touchOne.deltaPosition.x > -0.2f && touch.deltaPosition.x + touchOne.deltaPosition.x < 0.2f) return;
-            if(touch.deltaPosition.y + touchOne.deltaPosition.y < 0) 
-            {
-                cam.transform.Rotate(cam.transform.up, 10.0f * 0.1f);
-            }
-            else
-            {
-                cam.transform.Rotate(-cam.transform.up, 10.0f * 0.1f);
-            }
-            if(touch.deltaPosition.x + touchOne.deltaPosition.x < 0) 
-            {
-                cam.transform.Rotate(cam.transform.right, 10.0f * 0.1f);
-            }
-            else
-            {
-                cam.transform.Rotate(-cam.transform.right, 10.0f * 0.1f);
-            }
+
+        }
+        else
+        {
+            cam.transform.eulerAngles += new Vector3((touch.deltaPosition.y+touchOne.deltaPosition.y)/5, (touch.deltaPosition.x+touchOne.deltaPosition.x)/5, 0);
         }
     }
 
@@ -235,29 +217,26 @@ public class TouchManagerScript : MonoBehaviour
         cam.transform.rotation = originalCamRotation;
     }
 
-    public void MoveCam()
+    public void MoveCam(float pinchDistance)
     {
-        var touchZero = Input.GetTouch(0); 
-        var touchOne = Input.GetTouch(1);
+        // if(touchZero.phase == TouchPhase.Ended || touchZero.phase == TouchPhase.Canceled  
+        //     || touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled) 
+        // {
+        //     return;
+        // }
 
-        if(touchZero.phase == TouchPhase.Ended || touchZero.phase == TouchPhase.Canceled  
-            || touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled) 
-        {
-            return;
-        }
+        // if(touchZero.phase == TouchPhase.Began || touchOne.phase == TouchPhase.Began)
+        // {
+        //     initialDistance = Vector2.Distance(touchZero.position, touchOne.position);
+        //     initialPosition = cam.transform.position;
+        // }
+        // else
+        // {
+        //     var currentDistance = Vector2.Distance(touchZero.position, touchOne.position);
+        //     if(Mathf.Approximately(initialDistance,currentDistance)) return;
+        //     if(Mathf.Approximately(initialDistance-currentDistance, 0)) return;
 
-        if(touchZero.phase == TouchPhase.Began || touchOne.phase == TouchPhase.Began)
-        {
-            initialDistance = Vector2.Distance(touchZero.position, touchOne.position);
-            initialPosition = cam.transform.position;
-        }
-        else
-        {
-            var currentDistance = Vector2.Distance(touchZero.position, touchOne.position);
-            if(Mathf.Approximately(initialDistance,currentDistance)) return;
-            if(Mathf.Approximately(initialDistance-currentDistance, 0)) return;
-
-            cam.transform.position += Vector3.forward * (initialDistance-currentDistance) * .001f;
-        }
+            cam.transform.position += Vector3.forward * (pinchDistance) * 0.1f;
+        //}
     }
 }
