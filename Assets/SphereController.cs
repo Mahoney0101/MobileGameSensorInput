@@ -9,12 +9,11 @@ public class SphereController : MonoBehaviour, IControllable
     float initialDistance=1f;
     void Start()
     {
-    drag_position = transform.position;
+        drag_position = transform.position;
     }
 
     void Update()
     {
-    transform.position = Vector3.Lerp(transform.position, drag_position, 1f);
     }
     public void youveBeenTapped()
     {
@@ -36,6 +35,7 @@ public class SphereController : MonoBehaviour, IControllable
     public void MoveTo(Ray ray, Touch touch,Vector3 destination)
     {
      drag_position = destination;
+     transform.position = Vector3.Lerp(transform.position, drag_position, 1f);
     }
     public void Stop()
     {
@@ -73,7 +73,7 @@ public class SphereController : MonoBehaviour, IControllable
     }
     public void AccelerometerMove(Vector3 dir)
     {
-    float speed = 15f;
+    float speed = 7f;
     transform.Translate(dir * speed);
     }
 
