@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-interface IControllable{
+interface IControllable
+{
     void youveBeenTapped();
     void MoveTo(Ray ray, Touch touch,Vector3 destination);
     void RotateObject(float angle);
