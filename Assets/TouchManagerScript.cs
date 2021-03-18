@@ -44,11 +44,13 @@ public class TouchManagerScript : MonoBehaviour
         dir *= Time.deltaTime;
         selectedObject.AccelerometerMove(dir);
     }
+    //Move camera one finger
     if(Input.touchCount == 1 && selectedObject == null)
         {
             Touch touch = Input.GetTouch(0);
             cam.transform.Translate(touch.deltaPosition * -0.1f); 
         }
+    //Tap
     if (Input.touchCount == 1) 
     {
         Touch touch = Input.touches[0];
@@ -79,10 +81,15 @@ public class TouchManagerScript : MonoBehaviour
                         renderer.material.SetColor("_Color",Color.red);
                         starting_distance_to_selected_object = Vector3.Distance(Camera.main.transform.position, info.transform.position);
                     }
-                    else{
+                    else if(selectedObject != null){
+                        if(selectedObject != object_hit){
+                            //you must deselect object before selecting new object. This is the rule.
+                        }
+                        else{
                         Renderer renderer = info.transform.GetComponent<Renderer>();
                         renderer.material.SetColor("_Color",Color.white);
                         selectedObject = null;
+                        }
                     }
                 }
             }
@@ -104,6 +111,7 @@ public class TouchManagerScript : MonoBehaviour
         }
         }
     }
+    
     if (Input.touchCount == 2 && selectedObject == null)
     {
                 Touch touch = Input.touches[0];
